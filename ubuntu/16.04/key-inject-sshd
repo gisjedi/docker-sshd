@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+if [[ "${USERNAME}x" != "x" ]]
+then
+	SSH_DIR=/home/ubuntu/.ssh
+	mkdir -p $SSH_DIR
+	echo "$AUTHORIZED_KEYS" > $SSH_DIR/authorized_keys
+else
+	USERNAME=ubuntu
+fi
+
+# If PASSWORD unset default to username
+if [[ "${PASSWORD}x" == "x" ]]
+then
+	PASSWORD=$USERNAME
+fi
+
+useradd $USERNAME -m -p $PASSWORD 
+
+# If SUDO is set, give user sudo rights
+if [ -e SUDO ]
+then
+	usermod -aG sudo $USERNAME
+fi
+
+if [[ "${AUTHORIZED_KEYS}x" != "x" ]]
+then
+	SSH_DIR=/home/ubuntu/.ssh
+	mkdir -p $SSH_DIR
+	echo "$AUTHORIZED_KEYS" > $SSH_DIR/authorized_keys
+else
+	echo "AUTHORIZED_KEYS environment variable unset!"
+	exit 1	
+fi
+
+exec /usr/sbin/sshd -D
