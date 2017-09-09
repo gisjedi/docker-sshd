@@ -15,12 +15,15 @@ then
 	PASSWORD=$USERNAME
 fi
 
-useradd $USERNAME -m -p $PASSWORD 
+useradd $USERNAME -m
+echo $USERNAME:$PASSWORD | chpasswd
 
 # If SUDO is set, give user sudo rights
-if [ -e SUDO ]
+if [  "$SUDO" == "true" ]
 then
 	usermod -aG sudo $USERNAME
+else
+	usermod -G $USERNAME $USERNAME
 fi
 
 if [[ "${AUTHORIZED_KEYS}x" != "x" ]]
