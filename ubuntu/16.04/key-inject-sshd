@@ -1,11 +1,7 @@
 #!/usr/bin/env bash
 
-if [[ "${USERNAME}x" != "x" ]]
+if [[ "${USERNAME}x" == "x" ]]
 then
-	SSH_DIR=/home/ubuntu/.ssh
-	mkdir -p $SSH_DIR
-	echo "$AUTHORIZED_KEYS" > $SSH_DIR/authorized_keys
-else
 	USERNAME=ubuntu
 fi
 
@@ -34,9 +30,11 @@ fi
 
 if [[ "${AUTHORIZED_KEYS}x" != "x" ]]
 then
-	SSH_DIR=/home/ubuntu/.ssh
+	SSH_DIR=/home/${USERNAME}/.ssh
 	mkdir -p $SSH_DIR
 	echo "$AUTHORIZED_KEYS" > $SSH_DIR/authorized_keys
+	chmod 600 $SSH_DIR/authorized_keys
+	chown ${USERNAME} $SSH_DIR/authorized_keys
 else
 	echo "AUTHORIZED_KEYS environment variable unset!"
 	exit 1	
