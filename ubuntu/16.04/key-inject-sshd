@@ -19,11 +19,17 @@ useradd $USERNAME -m
 echo $USERNAME:$PASSWORD | chpasswd
 
 # If SUDO is set, give user sudo rights
-if [  "$SUDO" == "true" ]
+if [ "$SUDO" == "true" ]
 then
 	usermod -aG sudo $USERNAME
 else
 	usermod -G $USERNAME $USERNAME
+fi
+
+# Enable passwordless sudo
+if [ "NOPASSWD" == "true" ]
+then
+    echo "%sudo ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers
 fi
 
 if [[ "${AUTHORIZED_KEYS}x" != "x" ]]
