@@ -23,7 +23,7 @@ else
 fi
 
 # Enable passwordless sudo
-if [ "NOPASSWD" == "true" ]
+if [ "$NOPASSWD" == "true" ]
 then
     echo "%sudo ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers
 fi
