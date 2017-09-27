@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+
+if [[ "${USERNAME}x" == "x" ]]
+then
+	USERNAME=centos
+fi
+
+# If PASSWORD unset default to username
+if [[ "${PASSWORD}x" == "x" ]]
+then
+	PASSWORD=$USERNAME
+fi
+
+echo Adding user: $USERNAME
+useradd $USERNAME -m
+echo $USERNAME:$PASSWORD | chpasswd
+
+# If SUDO is set, give user sudo rights
+if [ "$SUDO" == "true" ]
+then
+    echo Granting $USERNAME sudo privileges.
+	usermod -aG sudo $USERNAME
+else
+	usermod -G $USERNAME $USERNAME
+fi
+
+# Enable passwordless sudo
+if [ "$NOPASSWD" == "true" ]
+then
+    echo Granting all sudo users passwordless elevation.
+    echo "%sudo ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers
+fi
+
+if [[ "${AUTHORIZED_KEYS}x" != "x" ]]
+then
+	SSH_DIR=/home/${USERNAME}/.ssh
+	mkdir -p $SSH_DIR
+	echo "$AUTHORIZED_KEYS" > $SSH_DIR/authorized_keys
+	chmod 600 $SSH_DIR/authorized_keys
+	chown ${USERNAME} $SSH_DIR/authorized_keys
+    echo Public keys injected into $SSH_DIR/authorized_keys:
+    cat $SSH_DIR/authorized_keys
+else
+	echo "AUTHORIZED_KEYS environment variable unset!"
+	exit 1	
+fi
+
+echo Launching SSH server in the foreground.
+exec /usr/sbin/sshd -D -e

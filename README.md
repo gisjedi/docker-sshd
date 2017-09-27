@@ -9,4 +9,4 @@ These images can be used out of the box for a simple ssh server that defaults to
 * NOPASSWD: Set to `true` to enable sudo for all users in sudo group (default is false).
 * PASSWORD: The password to be set for user (default is the same as username).
 * SUDO: Set to `true` to enable sudo for specified user (default is false).
-* USERNAME: The username to create enabled for access via ssh client (default is `ubuntu`)
+* USERNAME: The username to create enabled for access via ssh client (default is `ubuntu` or `centos`)
